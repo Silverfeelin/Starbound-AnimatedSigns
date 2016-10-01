@@ -32,6 +32,10 @@ namespace AnimatedSigns
 
         private void button_Click(object sender, RoutedEventArgs e)
         {
+            int fps;
+            if (!int.TryParse(tbxFPS.Text, out fps))
+                fps = 12;
+
             OpenFileDialog ofd = new OpenFileDialog()
             {
                 Filter = "Image Frames|*.png;*.jpg;*.gif;*.bmp",
@@ -62,12 +66,12 @@ namespace AnimatedSigns
                 return;
             }
 
-            CreateSigns(animatedFrame);
+            CreateSigns(animatedFrame, fps);
 
             bool b = true;
         }
         
-        private void CreateSigns(AnimatedImage animatedFrame)
+        private void CreateSigns(AnimatedImage animatedFrame, int fps)
         {
             Bitmap firstFrame = animatedFrame.Frames[0].Bitmap;
             int spriteWidth = (int)Math.Ceiling((decimal)firstFrame.Width / 32);
@@ -100,8 +104,13 @@ namespace AnimatedSigns
             {
                 for (int y = 0; y < spriteHeight; y++) // Every image in the height (8px)
                 {
-                    signs[x, y] = JObject.Parse("{   \"animationParts\": {     \"background\": \"none?multiply=00000000\"   },   \"scriptStorage\": {},   \"signBacking\": \"none\",   \"signData\": [],   \"shortdescription\": \"Animated Sign\" }");
-                    signs[x, y]["shortdescription"] = string.Format("Sign [{0},{1}]", (x + 1), (y + 1));
+                    signs[x, y] = JObject.Parse("{   \"animationParts\": {     \"background\": \"none?multiply=00000000\"   },   \"scriptStorage\": {},   \"signBacking\": \"none\",   \"signData\": [], \"scriptDelta\": 1,  \"shortdescription\": \"Animated Sign\" }");
+
+                    signs[x, y]["shortdescription"] = string.Format("Sign [{0},{1}]",
+                        chkID.IsChecked.HasValue && chkID.IsChecked.Value ? x : (x + 1),
+                        chkID.IsChecked.HasValue && chkID.IsChecked.Value ? y : (y + 1));
+
+                    signs[x, y]["drawCooldown"] = (double)(1d / 60d * fps);
                 }
             }
 
