@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
@@ -15,14 +16,23 @@ namespace AnimatedSigns
         /// </summary>
         public List<Frame> Frames { get; set; }
 
+        public BackgroundWorker Worker { get; set; }
+
+        private int fps;
+        private int startIndex;
+
         /// <summary>
         /// Initialized a new empty AnimatedImage.
         /// </summary>
         public AnimatedImage()
         {
             Frames = new List<Frame>();
-        }
 
+            Worker = new BackgroundWorker();
+            Worker.WorkerReportsProgress = true;
+            Worker.DoWork += SignWorker_DoWork;
+        }
+        
         /// <summary>
         /// Adds the image frame to this AnimatedImage.
         /// Adding frames of GIF images possible thanks to this answer by nobugz:
@@ -111,16 +121,31 @@ namespace AnimatedSigns
         }
 
         /// <summary>
-        /// Creates and returns objects containing the parameters for customsigns in a two dimensional array.
+        /// Starts creating sign objects containing the parameters for customsigns in a two dimensional array.
+        /// The result will be sent to subscribers to the RunWorkerCompleted event of <see cref="Worker"/>.
         /// </summary>
         /// <param name="fps">Animation 'framerate'. Interval between each frame is (1/fps).</param>
         /// <param name="startIndex">Start index used for naming items. "Sign [x,y]"</param>
-        /// <returns>Two dimensional array of configured customsign objects.</returns>
-        public JObject[,] CreateSigns(int fps, int startIndex = 0)
+        public void CreateSigns(int fps, int startIndex = 0)
         {
             if (Frames.Count == 0)
                 throw new ArgumentException("No frames could be found. Did you select valid files?");
 
+            this.fps = fps;
+            this.startIndex = startIndex;
+            
+            Worker.RunWorkerAsync();
+        }
+
+        /// <summary>
+        /// BackgroundWorker task. Creates customsign objects containing signData for all <see cref="Frames"/>.
+        /// Reports progress every 32x8 processed pixels.
+        /// Stores the sign objects (JObject[,]) in e.Result.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SignWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
             Bitmap firstFrame = Frames[0].Bitmap;
             int spriteWidth = (int)Math.Ceiling((decimal)firstFrame.Width / 32);
             int spriteHeight = (int)Math.Ceiling((decimal)firstFrame.Height / 8);
@@ -128,7 +153,9 @@ namespace AnimatedSigns
             JObject[,] signs = CreateEmptySigns(spriteWidth, spriteHeight, fps, startIndex);
 
             Color[,] templateColors = ColorExt.CreateTemplate();
-            
+
+            int frameCount = 0;
+            int maxFrames = Frames.Count * spriteHeight * spriteWidth;
             foreach (Frame f in Frames)
             {
                 Point imagePixel = new Point(0, 0);
@@ -138,10 +165,11 @@ namespace AnimatedSigns
                 {
                     for (int frameHeight = 0; frameHeight < spriteHeight; frameHeight++)
                     {
-                        imagePixel = new Point(frameWidth * 32, frameHeight * 8);
+                        Worker.ReportProgress(100 * frameCount++ / maxFrames);
 
-                        bool containsPixels = false;
-                        
+                        imagePixel.X = frameWidth * 32;
+                        imagePixel.Y = frameHeight * 8;
+
                         StringBuilder directives = new StringBuilder("?replace");
 
                         for (int i = 0; i < 32; i++)
@@ -168,13 +196,14 @@ namespace AnimatedSigns
                             imagePixel.X++;
                             imagePixel.Y = frameHeight * 8;
                         }
-                        
+
                         ((JArray)signs[frameWidth, frameHeight]["signData"]).Add(directives.ToString());
                     }
                 }
             }
 
-            return signs;
+            Worker.ReportProgress(100);
+            e.Result = signs;
         }
     }
 }

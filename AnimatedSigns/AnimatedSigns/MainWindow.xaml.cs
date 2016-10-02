@@ -153,13 +153,36 @@ namespace AnimatedSigns
             JObject[,] signs;
             try
             {
-                 signs = animatedFrame.CreateSigns(FPS, StartIndex);
+                animatedFrame.Worker.RunWorkerCompleted += SignWorker_RunWorkerCompleted;
+                animatedFrame.Worker.ProgressChanged += SignWorker_ProgressChanged;
+                animatedFrame.CreateSigns(FPS, StartIndex);
             }
             catch (ArgumentException aexc)
             {
                 MessageBox.Show(aexc.Message);
                 return;
             }
+        }
+
+        /// <summary>
+        /// Callback fired when <see cref="AnimatedImage.Worker"/> reports progress. Updates the progress bar.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void SignWorker_ProgressChanged(object sender, System.ComponentModel.ProgressChangedEventArgs e)
+        {
+            progress.Value = e.ProgressPercentage;
+        }
+
+        /// <summary>
+        /// Callback fired when <see cref="AnimatedImage.Worker"/> is done creating signs.
+        /// Creates spawnitem commands for the signs and copies everything to the Clipboard.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">Event args, contains signs as (JObject[,])e.Result.</param>
+        private void SignWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            JObject[,] signs = (JObject[,])e.Result;
 
             StringBuilder outp = new StringBuilder("// Each line contains one /spawnitem command for a sign. Signs are named after their [X,Y] position.\n");
             for (int i = 0; i < signs.GetLength(1); i++)

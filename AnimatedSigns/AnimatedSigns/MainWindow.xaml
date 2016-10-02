@@ -5,19 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AnimatedSigns"
         mc:Ignorable="d"
-        Title="Animated Signs" MinHeight="283" Height="283" MinWidth="293" Width="293">
+        Title="Animated Signs" MinHeight="283" Height="319" MinWidth="293" Width="293">
     <Grid>
         <Label x:Name="label" Content="Select frames (GIF supported):" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0"/>
 
         <Label x:Name="lblSort" Content="Individual frame files will be sorted by name." Margin="10,23,18,0" VerticalAlignment="Top"/>
-        <TextBox x:Name="tbxFPS" HorizontalAlignment="Left" Height="24" Margin="47,0,0,56" TextWrapping="Wrap" Text="12" VerticalAlignment="Bottom" Width="53"/>
-        <Label x:Name="lblFPS" Content="FPS:" HorizontalAlignment="Left" Margin="10,0,0,54" VerticalAlignment="Bottom"/>
-        <Label x:Name="lblID" Content="Start ID at 0:" HorizontalAlignment="Left" Margin="100,0,0,54" VerticalAlignment="Bottom"/>
-        <CheckBox x:Name="chkID" Content="" HorizontalAlignment="Left" Margin="173,0,0,59" VerticalAlignment="Bottom"/>
+        <TextBox x:Name="tbxFPS" HorizontalAlignment="Left" Height="24" Margin="47,0,0,70" TextWrapping="Wrap" Text="12" VerticalAlignment="Bottom" Width="53"/>
+        <Label x:Name="lblFPS" Content="FPS:" HorizontalAlignment="Left" Margin="10,0,0,68" VerticalAlignment="Bottom"/>
+        <Label x:Name="lblID" Content="Start ID at 0:" HorizontalAlignment="Left" Margin="100,0,0,68" VerticalAlignment="Bottom"/>
+        <CheckBox x:Name="chkID" Content="" HorizontalAlignment="Left" Margin="173,0,0,73" VerticalAlignment="Bottom"/>
 
         <Button x:Name="btnBrowse" Content="Browse..." Margin="180,3,0,0" VerticalAlignment="Top" Click="btnBrowse_Click" HorizontalAlignment="Left" Width="87"/>
-        <TextBox x:Name="tbxFiles" Margin="10,68,18,85" Text="" AcceptsReturn="True" AllowDrop="True" PreviewDragOver="textBox_PreviewDragOver" Drop="textBox_Drop" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
-        <Button x:Name="btnCreate" Content="Create and Copy" Margin="10,0,18,17" VerticalAlignment="Bottom" Click="btnCreate_Click" Height="32"/>
+        <TextBox x:Name="tbxFiles" Margin="10,68,18,99" Text="" AcceptsReturn="True" AllowDrop="True" PreviewDragOver="textBox_PreviewDragOver" Drop="textBox_Drop" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+        <Button x:Name="btnCreate" Content="Create and Copy" Margin="10,0,10,33" VerticalAlignment="Bottom" Click="btnCreate_Click" Height="32"/>
         <Label x:Name="lblMissing" Content="Missing or invalid files will be ignored." Margin="10,42,18,0" VerticalAlignment="Top"/>
+        <ProgressBar x:Name="progress" Height="18" Margin="10,0,10,10" VerticalAlignment="Bottom"/>
     </Grid>
 </Window>
