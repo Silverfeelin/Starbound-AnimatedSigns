@@ -13,6 +13,7 @@ A simple tool that generates `customsign` items from image files.
 * Convert animated GIF files to animated custom signs.
 * `/spawnitem` commands for all generated signs.
 * Set animation speed in frames per second.
+* Set sign light color (leave empty for no lighting).
 
 ## Installation
 * [Download](https://github.com/Silverfeelin/Starbound-AnimatedSigns/releases) and unpack the contents of the latest release.
@@ -23,11 +24,19 @@ A simple tool that generates `customsign` items from image files.
  * You can also drag image files directly into the empty text field.
 * Confirm the order of your frames in the text field. Each line should contain the file path to one image.
 * Configure the FPS (frames per second) of the animation. `60` is the maximum value.
-* Press `Create and Copy`.
+* Configure the sign light.
+ * Should be a 6 digit hexadecimal string. Leave empty for no lighting.
+* Press `Create and Copy` or `Create and Export`.
+
+### Copy
 * Check your clipboard for the results after the tool is done.
  * The clipboard contains the `/spawnitem` commands for each sign. You'll want to paste this in a text editor first for further use.
 * Paste each `/spawnitem` command in singleplayer. You may need to enable `/admin` first
  * The item will appear at your cursor, so hover your cursor near your character!
+
+### Export
+* You will be asked to save a file somewhere. The folder and file name will be used as a base. Each sign will be generated as a new file named in `<path>\<name>[x,y].json`.
+* Import the signs using StarCheat, or whatever other tools you have.
 
 ## Planned
 I don't really have anything planned right now, maybe a live preview or something.
