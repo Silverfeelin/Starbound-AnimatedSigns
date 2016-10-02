@@ -110,7 +110,7 @@ namespace AnimatedSigns
                         chkID.IsChecked.HasValue && chkID.IsChecked.Value ? x : (x + 1),
                         chkID.IsChecked.HasValue && chkID.IsChecked.Value ? y : (y + 1));
 
-                    signs[x, y]["drawCooldown"] = (double)(1d / 60d * fps);
+                    signs[x, y]["drawCooldown"] = (double)(1d / fps);
                 }
             }
 
@@ -128,7 +128,7 @@ namespace AnimatedSigns
                         bool containsPixels = false;
 
                         string texture = "/objects/outpost/customsign/signplaceholder.png";
-                        string directives = "?replace";
+                        StringBuilder directives = new StringBuilder("?replace");
 
                         for (int i = 0; i < 32; i++)
                         {
@@ -143,15 +143,13 @@ namespace AnimatedSigns
 
                                 System.Drawing.Color imageColor = f.Bitmap.GetPixel(Convert.ToInt32(imagePixel.X), Convert.ToInt32(imagePixel.Y));
 
-                                if (imageColor.ToArgb() == System.Drawing.Color.White.ToArgb())
-                                    imageColor = System.Drawing.Color.FromArgb(255, 254, 254, 254);
-
                                 System.Drawing.Color templateColor = templateColors[i,j];
-
-                                directives += string.Format(";{0}={1}", ColorToRGBAHexString(templateColor), ColorToRGBAHexString(imageColor));
-
+                                
                                 if (imageColor.A > 1)
+                                {
+                                    directives.Append(string.Format(";{0}={1}", ColorToRGBAHexString(templateColor), ColorToRGBAHexString(imageColor)));
                                     containsPixels = true;
+                                }
 
                                 imagePixel.Y++;
                             }
@@ -162,21 +160,22 @@ namespace AnimatedSigns
 
 
                         if (containsPixels)
-                            ((JArray)signs[frameWidth, frameHeight]["signData"]).Add(directives);
+                            ((JArray)signs[frameWidth, frameHeight]["signData"]).Add(directives.ToString());
                     }
                 }
             }
 
-            string outp = "";
+            StringBuilder outp = new StringBuilder("// Each line contains one /spawnitem command for a sign. Signs are named after their [X,Y] position.\n");
             for (int i = 0; i < signs.GetLength(1); i++)
             {
                 for (int j = 0; j < signs.GetLength(0); j++)
                 {
-                    outp += "/spawnitem customsign 1 '" + signs[j, i].ToString(Newtonsoft.Json.Formatting.None) + "'\n";
+                    if (((JArray)signs[j, i]["signData"]).Count > 0)
+                        outp.Append("/spawnitem customsign 1 '" + signs[j, i].ToString(Newtonsoft.Json.Formatting.None) + "'\n");
                 }
             }
 
-            Clipboard.SetText(outp);
+            Clipboard.SetText(outp.ToString());
             MessageBox.Show("Output copied to clipboard.");
         }
 
