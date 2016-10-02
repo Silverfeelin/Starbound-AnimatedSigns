@@ -25,17 +25,69 @@ namespace AnimatedSigns
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// Initializes the main window.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
         }
-
-        private void button_Click(object sender, RoutedEventArgs e)
+        
+        /// <summary>
+        /// Gets or sets the FPS at which the signs cycle through frames.
+        /// This value is directly tied to the contents of <see cref="tbxFPS"/>.
+        /// </summary>
+        public int FPS
         {
-            int fps;
-            if (!int.TryParse(tbxFPS.Text, out fps))
-                fps = 12;
+            get
+            {
+                int fps;
+                return int.TryParse(tbxFPS.Text, out fps) ? fps : 12;
+            }
+            set
+            {
+                tbxFPS.Text = value.ToString();
+            }
+        }
 
+        /// <summary>
+        /// Gets the start index, used for naming signs.
+        /// Some people prefer indices to start at 0, others 1.
+        /// This value is directly tied to the value of <see cref="chkID"/>.
+        /// </summary>
+        public int StartIndex
+        {
+            get
+            {
+                return (chkID.IsChecked.HasValue && chkID.IsChecked.Value) ? 0 : 1;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the selection of files.
+        /// This value is directly tied to the contents of <see cref="tbxFiles"/>.
+        /// </summary>
+        public string[] Files
+        {
+            get
+            {
+                return tbxFiles.Text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            }
+            set
+            {
+                tbxFiles.Text = "";
+                foreach (var path in value)
+                    tbxFiles.Text += path + Environment.NewLine;
+            }
+        }
+
+        /// <summary>
+        /// Event handler that allows users to select a variable amount of image files.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnBrowse_Click(object sender, RoutedEventArgs e)
+        {
             OpenFileDialog ofd = new OpenFileDialog()
             {
                 Filter = "Image Frames|*.png;*.jpg;*.gif;*.bmp",
@@ -49,16 +101,48 @@ namespace AnimatedSigns
                 return;
             }
 
-            string[] files = ofd.FileNames;
+            tbxFiles.Text = "";
 
+            string[] files = ofd.FileNames;
             NumericComparer ns = new NumericComparer();
             Array.Sort(files, ns);
 
+            Files = files;
+        }
 
+        /// <summary>
+        /// Event handler that disables whatever stops us from dragging text in the textbox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox_PreviewDragOver(object sender, DragEventArgs e)
+        {
+            e.Handled = true;
+        }
+
+        /// <summary>
+        /// Event handler that allows users to drag files in the textbox.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void textBox_Drop(object sender, DragEventArgs e)
+        {
+            string[] droppedFilePaths = e.Data.GetData(DataFormats.FileDrop, true) as string[];
+            Files = droppedFilePaths;
+        }
+
+        /// <summary>
+        /// Event handler that creates animated signs for the current files <see cref="Files"/>.
+        /// The results are parsed and turned into spawnitem commands, which are then copied to the user's clipboard.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnCreate_Click(object sender, RoutedEventArgs e)
+        {
             AnimatedImage animatedFrame = new AnimatedImage();
             try
             {
-                animatedFrame.AddImages(files);
+                animatedFrame.AddImages(Files);
             }
             catch (DimensionException dexc)
             {
@@ -66,103 +150,15 @@ namespace AnimatedSigns
                 return;
             }
 
-            CreateSigns(animatedFrame, fps);
-
-            bool b = true;
-        }
-        
-        private void CreateSigns(AnimatedImage animatedFrame, int fps)
-        {
-            Bitmap firstFrame = animatedFrame.Frames[0].Bitmap;
-            int spriteWidth = (int)Math.Ceiling((decimal)firstFrame.Width / 32);
-            int spriteHeight = (int)Math.Ceiling((decimal)firstFrame.Height / 8);
-
-            JObject[,] signs = new JObject[spriteWidth, spriteHeight];
-
-            int drawableX = 0;
-            int drawableY = 0;
-
-            System.Drawing.Color[,] templateColors = new System.Drawing.Color[32, 8];
-
-            for (var i = 0; i < 32; i++)
+            JObject[,] signs;
+            try
             {
-                for (var j = 0; j < 8; j++)
-                {
-                    var x = i;
-                    if (i >= 9)
-                        x += 6;
-                    if (i >= 19)
-                        x += 6;
-                    if (i >= 29)
-                        x += 6;
-
-                    templateColors[i, j] = System.Drawing.Color.FromArgb(1, x + 1, 0, j + 1);
-                }
+                 signs = animatedFrame.CreateSigns(FPS, StartIndex);
             }
-
-            for (int x = 0; x < spriteWidth; x++) // Every image in the width (32px)
+            catch (ArgumentException aexc)
             {
-                for (int y = 0; y < spriteHeight; y++) // Every image in the height (8px)
-                {
-                    signs[x, y] = JObject.Parse("{   \"animationParts\": {     \"background\": \"none?multiply=00000000\"   },   \"scriptStorage\": {},   \"signBacking\": \"none\",   \"signData\": [], \"scriptDelta\": 1,  \"shortdescription\": \"Animated Sign\" }");
-
-                    signs[x, y]["shortdescription"] = string.Format("Sign [{0},{1}]",
-                        chkID.IsChecked.HasValue && chkID.IsChecked.Value ? x : (x + 1),
-                        chkID.IsChecked.HasValue && chkID.IsChecked.Value ? y : (y + 1));
-
-                    signs[x, y]["drawCooldown"] = (double)(1d / fps);
-                }
-            }
-
-            foreach (Frame f in animatedFrame.Frames)
-            {
-                System.Drawing.Point imagePixel = new System.Drawing.Point(0, 0);
-
-                // Add a drawable for every signplaceholder needed.
-                for (int frameWidth = 0; frameWidth < spriteWidth; frameWidth++)
-                {
-                    for (int frameHeight = 0; frameHeight < spriteHeight; frameHeight++)
-                    {
-                        imagePixel = new System.Drawing.Point(frameWidth * 32, frameHeight * 8);
-
-                        bool containsPixels = false;
-
-                        string texture = "/objects/outpost/customsign/signplaceholder.png";
-                        StringBuilder directives = new StringBuilder("?replace");
-
-                        for (int i = 0; i < 32; i++)
-                        {
-                            for (int j = 0; j < 8; j++)
-                            {
-                                // Pixel falls within template but is outside of the supplied image.
-                                if ((imagePixel.X > f.Bitmap.Width - 1 || imagePixel.Y > f.Bitmap.Height - 1))
-                                {
-                                    imagePixel.Y++;
-                                    continue;
-                                }
-
-                                System.Drawing.Color imageColor = f.Bitmap.GetPixel(Convert.ToInt32(imagePixel.X), Convert.ToInt32(imagePixel.Y));
-
-                                System.Drawing.Color templateColor = templateColors[i,j];
-                                
-                                if (imageColor.A > 1)
-                                {
-                                    directives.Append(string.Format(";{0}={1}", ColorToRGBAHexString(templateColor), ColorToRGBAHexString(imageColor)));
-                                    containsPixels = true;
-                                }
-
-                                imagePixel.Y++;
-                            }
-
-                            imagePixel.X++;
-                            imagePixel.Y = frameHeight * 8;
-                        }
-
-
-                        if (containsPixels)
-                            ((JArray)signs[frameWidth, frameHeight]["signData"]).Add(directives.ToString());
-                    }
-                }
+                MessageBox.Show(aexc.Message);
+                return;
             }
 
             StringBuilder outp = new StringBuilder("// Each line contains one /spawnitem command for a sign. Signs are named after their [X,Y] position.\n");
@@ -170,23 +166,15 @@ namespace AnimatedSigns
             {
                 for (int j = 0; j < signs.GetLength(0); j++)
                 {
+                    if (signs[j, i] == null) continue;
+
                     if (((JArray)signs[j, i]["signData"]).Count > 0)
                         outp.Append("/spawnitem customsign 1 '" + signs[j, i].ToString(Newtonsoft.Json.Formatting.None) + "'\n");
                 }
             }
 
             Clipboard.SetText(outp.ToString());
-            MessageBox.Show("Output copied to clipboard.");
-        }
-
-        private string ColorToRGBAHexString(System.Drawing.Color c)
-        {
-            string r = c.R.ToString("X2");
-            string g = c.G.ToString("X2");
-            string b = c.B.ToString("X2");
-            string a = c.A.ToString("X2");
-            
-            return r + g + b + a;
+            MessageBox.Show("Results copied to Clipboard!");
         }
     }
 }

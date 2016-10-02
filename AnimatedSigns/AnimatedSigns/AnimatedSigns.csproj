@@ -70,9 +70,10 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ColorExt.cs" />
     <Compile Include="DimensionException.cs" />
     <Compile Include="Frame.cs" />
-    <Compile Include="AnimatedFrame.cs" />
+    <Compile Include="AnimatedImage.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
