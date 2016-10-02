@@ -18,6 +18,7 @@ A simple tool that generates `customsign` items from image files.
 * [Download](https://github.com/Silverfeelin/Starbound-AnimatedSigns/releases) and unpack the contents of the latest release.
 
 ## Usage
+* Open the application (`AnimatedSigns.exe`, located where you unpacked the release).
 * Select `Browse...` and select your image file(s)
  * You can also drag image files directly into the empty text field.
 * Confirm the order of your frames in the text field. Each line should contain the file path to one image.
