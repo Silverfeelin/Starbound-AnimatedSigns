@@ -25,6 +25,9 @@ A simple tool that generates `customsign` items from image files.
 * Configure the FPS (frames per second) of the animation. `60` is the maximum value.
 * Press `Create and Copy`.
 * Check your clipboard for the results after the tool is done.
+ * The clipboard contains the `/spawnitem` commands for each sign. You'll want to paste this in a text editor first for further use.
+* Paste each `/spawnitem` command in singleplayer. You may need to enable `/admin` first
+ * The item will appear at your cursor, so hover your cursor near your character!
 
 ## Planned
 I don't really have anything planned right now, maybe a live preview or something.
