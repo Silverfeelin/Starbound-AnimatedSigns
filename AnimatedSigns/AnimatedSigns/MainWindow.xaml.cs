@@ -81,6 +81,21 @@ namespace AnimatedSigns
             }
         }
 
+        public string Light
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(tbxLight.Text))
+                    return null;
+
+                return tbxLight.Text.Replace("#", "");
+            }
+            set
+            {
+                tbxLight.Text = value;
+            }
+        }
+
         /// <summary>
         /// Event handler that allows users to select a variable amount of image files.
         /// </summary>
@@ -137,8 +152,10 @@ namespace AnimatedSigns
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void btnCreate_Click(object sender, RoutedEventArgs e)
+        private void btnCopy_Click(object sender, RoutedEventArgs e)
         {
+            if (!ConfirmGenerating()) return;
+
             AnimatedImage animatedFrame = new AnimatedImage();
             try
             {
@@ -149,19 +166,90 @@ namespace AnimatedSigns
                 MessageBox.Show(dexc.Message);
                 return;
             }
-
-            JObject[,] signs;
+            
             try
             {
-                animatedFrame.Worker.RunWorkerCompleted += SignWorker_RunWorkerCompleted;
+                animatedFrame.Worker.RunWorkerCompleted += SignWorker_CompletedText;
                 animatedFrame.Worker.ProgressChanged += SignWorker_ProgressChanged;
-                animatedFrame.CreateSigns(FPS, StartIndex);
+                animatedFrame.CreateSigns(FPS, StartIndex, Light);
             }
             catch (ArgumentException aexc)
             {
                 MessageBox.Show(aexc.Message);
                 return;
             }
+        }
+
+        private void btnExport_Click(object sender, RoutedEventArgs e)
+        {
+            if (!ConfirmGenerating()) return;
+
+            SaveFileDialog sfd = new SaveFileDialog()
+            {
+                Title = "Exported files location"
+            };
+
+            bool? res = sfd.ShowDialog();
+            if (!res.HasValue || !res.Value) return;
+
+            AnimatedImage animatedFrame = new AnimatedImage();
+            try
+            {
+                animatedFrame.AddImages(Files);
+            }
+            catch (DimensionException dexc)
+            {
+                MessageBox.Show(dexc.Message);
+                return;
+            }
+            
+            try
+            {
+                animatedFrame.Worker.RunWorkerCompleted += SignWorker_CompletedExports;
+                animatedFrame.Worker.ProgressChanged += SignWorker_ProgressChanged;
+                animatedFrame.CreateSigns(FPS, StartIndex, Light, sfd.FileName);
+            }
+            catch (ArgumentException aexc)
+            {
+                MessageBox.Show(aexc.Message);
+                return;
+            }
+        }
+
+        /// <summary>
+        /// Prompts the user to confirm if they want to generate the signs.
+        /// </summary>
+        /// <returns>True if the user says yes, false if there's no valid images or the user says no.</returns>
+        private bool ConfirmGenerating()
+        {
+            if (Files.Length == 0)
+            {
+                MessageBox.Show("You have not selected any items!");
+                return false;
+            }
+
+            foreach (var item in Files)
+            {
+                try
+                {
+                    System.Drawing.Image img = System.Drawing.Image.FromFile(item);
+
+                    int width, height;
+                    width = (int)Math.Ceiling(img.Width / 32d);
+                    height = (int)Math.Ceiling(img.Height / 8d);
+
+                    string message = string.Format("You are about to create the following amount of signs:\nHorizontal: {0}\nVertical: {1}\nTotal: {2}\nDo you want to continue?", width, height, width * height);
+                    MessageBoxResult mbr = MessageBox.Show(message, "Warning", MessageBoxButton.YesNo);
+                    return mbr == MessageBoxResult.Yes;
+                }
+                catch
+                {
+                    continue;
+                }
+            }
+
+            return false;
+            
         }
 
         /// <summary>
@@ -180,7 +268,7 @@ namespace AnimatedSigns
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e">Event args, contains signs as (JObject[,])e.Result.</param>
-        private void SignWorker_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        private void SignWorker_CompletedText(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
             JObject[,] signs = (JObject[,])e.Result;
 
@@ -197,7 +285,56 @@ namespace AnimatedSigns
             }
 
             Clipboard.SetText(outp.ToString());
-            MessageBox.Show("Results copied to Clipboard!");
+            MessageBox.Show("Spawnitem commands copied to Clipboard!");
+        }
+
+        /// <summary>
+        /// Callback fired when <see cref="AnimatedImage.Worker"/> is done creating signs.
+        /// Creates export files and saves them.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e">Event args, contains signs as (JObject[,])e.Result.</param>
+        private void SignWorker_CompletedExports(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
+        {
+            Tuple<string, JObject[,]> result = (Tuple<string,JObject[,]>)e.Result;
+
+            JObject[,] signs = result.Item2;
+
+            FileInfo target = new FileInfo(result.Item1);
+            DirectoryInfo path = target.Directory;
+            if (!path.Exists)
+            {
+                MessageBox.Show("The target path does not exist. Files could not be saved.");
+                return;
+            }
+
+            string name = target.Name;
+
+            for (int i = 0; i < signs.GetLength(0); i++)
+            {
+                for (int j = 0; j < signs.GetLength(1); j++)
+                {
+                    JObject sign = signs[i, j];
+                    string signPath = path.FullName + "\\" + name + sign["shortdescription"].Value<string>() + ".json";
+                    if (File.Exists(signPath))
+                    {
+                        MessageBoxResult mbr = MessageBox.Show("File '" + signPath + "' already exists. Do you want to overwrite it?", "Warning", MessageBoxButton.YesNoCancel);
+                        if (mbr == MessageBoxResult.No)
+                            continue;
+                        else if (mbr != MessageBoxResult.Yes)
+                            return;
+                    }
+
+                    JObject export = new JObject();
+                    export["name"] = "customsign";
+                    export["count"] = 1;
+                    export["parameters"] = sign;
+
+                    File.WriteAllText(signPath, export.ToString(Newtonsoft.Json.Formatting.Indented));
+                }
+            }
+            
+            MessageBox.Show("Files saved!");
         }
     }
 }

@@ -18,8 +18,11 @@ namespace AnimatedSigns
 
         public BackgroundWorker Worker { get; set; }
 
+        public string ExportPath { get; set; } = null;
+
         private int fps;
         private int startIndex;
+        private string light;
 
         /// <summary>
         /// Initialized a new empty AnimatedImage.
@@ -100,20 +103,22 @@ namespace AnimatedSigns
         /// <param name="fps">Animation 'framerate'. Interval between each frame is (1/fps).</param>
         /// <param name="startIndex">Start index used for naming items. "Sign [x,y]"</param>
         /// <returns>Two dimensional array of instantiated customsign objects, without any signData entries.</returns>
-        private JObject[,] CreateEmptySigns(int width, int height, int fps = 12, int startIndex = 0)
+        private JObject[,] CreateEmptySigns(int width, int height, int fps = 12, int startIndex = 0, string light = null)
         {
             JObject[,] signs = new JObject[width, height];
             double cooldown = 1d / fps;
 
             JObject sign = JObject.Parse("{   \"animationParts\": {     \"background\": \"none?multiply=00000000\"   },   \"scriptStorage\": {},   \"signBacking\": \"none\",   \"signData\": [], \"scriptDelta\": 1,  \"shortdescription\": \"Animated Sign\" }");
             sign["drawCooldown"] = cooldown;
+            if (light != null)
+                sign["signLight"] = light;
 
             for (int x = 0; x < width; x++) // Every image in the width (32px)
             {
                 for (int y = 0; y < height; y++) // Every image in the height (8px)
                 {
                     signs[x, y] = (JObject)sign.DeepClone();
-                    signs[x, y]["shortdescription"] = string.Format("Sign [{0},{1}]", (x + startIndex), (y + startIndex));
+                    signs[x, y]["shortdescription"] = string.Format("[{0},{1}]", (x + startIndex), (y + startIndex));
                 }
             }
 
@@ -126,15 +131,17 @@ namespace AnimatedSigns
         /// </summary>
         /// <param name="fps">Animation 'framerate'. Interval between each frame is (1/fps).</param>
         /// <param name="startIndex">Start index used for naming items. "Sign [x,y]"</param>
-        public void CreateSigns(int fps, int startIndex = 0)
+        public void CreateSigns(int fps, int startIndex = 0, string light = null, string exportPath = null)
         {
             if (Frames.Count == 0)
                 throw new ArgumentException("No frames could be found. Did you select valid files?");
 
             this.fps = fps;
             this.startIndex = startIndex;
-            
-            Worker.RunWorkerAsync();
+            this.light = light;
+            this.ExportPath = exportPath;
+               
+            Worker.RunWorkerAsync(exportPath);
         }
 
         /// <summary>
@@ -150,7 +157,7 @@ namespace AnimatedSigns
             int spriteWidth = (int)Math.Ceiling((decimal)firstFrame.Width / 32);
             int spriteHeight = (int)Math.Ceiling((decimal)firstFrame.Height / 8);
 
-            JObject[,] signs = CreateEmptySigns(spriteWidth, spriteHeight, fps, startIndex);
+            JObject[,] signs = CreateEmptySigns(spriteWidth, spriteHeight, fps, startIndex, light);
 
             Color[,] templateColors = ColorExt.CreateTemplate();
 
@@ -203,7 +210,11 @@ namespace AnimatedSigns
             }
 
             Worker.ReportProgress(100);
-            e.Result = signs;
+            if (e.Argument is string)
+                e.Result = new Tuple<string, JObject[,]>(e.Argument as string, signs);
+            else
+                e.Result = signs;
+
         }
     }
 }
