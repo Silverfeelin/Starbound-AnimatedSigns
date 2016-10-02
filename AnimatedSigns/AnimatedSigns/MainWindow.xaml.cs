@@ -128,7 +128,7 @@ namespace AnimatedSigns
         private void textBox_Drop(object sender, DragEventArgs e)
         {
             string[] droppedFilePaths = e.Data.GetData(DataFormats.FileDrop, true) as string[];
-            Files = droppedFilePaths;
+            Files = Files.Concat(droppedFilePaths).ToArray();
         }
 
         /// <summary>
