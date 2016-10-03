@@ -30,10 +30,10 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
                     </Grid.RowDefinitions>
 
                     <Rectangle Grid.Column="0" Grid.Row="0"  Fill="#FFE9E9E9" />
@@ -44,21 +44,21 @@
                     <Rectangle Grid.Column="1" Grid.Row="2"  Fill="#FFE9E9E9" />
                     <Rectangle Grid.Column="2" Grid.Row="2"  Fill="#FFE9E9E9" />
 
-                    <Label Grid.Row="0" Grid.Column="0"  x:Name="lblFPS" Content="FPS:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbxFPS" Height="24" TextWrapping="Wrap" Text="12" VerticalAlignment="Top"/>
-                    <Label Grid.Row="0" Grid.Column="2" x:Name="lblFPSDesc" Content="Framerate of the animation." HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Label Grid.Row="0" Grid.Column="0"  x:Name="lblFPS" Content="FPS:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbxFPS" Height="24" TextWrapping="Wrap" Text="12" VerticalAlignment="Center" Margin="0,4,0,4"/>
+                    <Label Grid.Row="0" Grid.Column="2" x:Name="lblFPSDesc" Content="Framerate of the animation." HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-                    <Label Grid.Row="1" Grid.Column="0" x:Name="lblID" Content="Start ID at 0:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                    <CheckBox Grid.Row="1" Grid.Column="1" x:Name="chkID" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16"/>
-                    <Label Grid.Row="1" Grid.Column="2" x:Name="lblIDDesc" Content="Start item names at 0 or 1 (eg. 'sign [0,0]')." HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Label Grid.Row="1" Grid.Column="0" x:Name="lblID" Content="Start ID at 0:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <CheckBox Grid.Row="1" Grid.Column="1" x:Name="chkID" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
+                    <Label Grid.Row="1" Grid.Column="2" x:Name="lblIDDesc" Content="Start item names at 0 or 1 (eg. 'sign [0,0]')." HorizontalAlignment="Left" Margin="0,8" Height="26" VerticalAlignment="Center"/>
 
-                    <Label Grid.Row="2" Grid.Column="0" x:Name="lblSubFolder" Content="Use Subfolder:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                    <CheckBox Grid.Row="2" Grid.Column="1" x:Name="chkSubFolder" IsChecked="True" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16"/>
-                    <Label Grid.Row="2" Grid.Column="2" x:Name="lblSubFolderDesc" Content="Save export files in subfolder. Uses same name as file." HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Label Grid.Row="2" Grid.Column="0" x:Name="lblSubFolder" Content="Use Subfolder:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <CheckBox Grid.Row="2" Grid.Column="1" x:Name="chkSubFolder" IsChecked="True" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
+                    <Label Grid.Row="2" Grid.Column="2" x:Name="lblSubFolderDesc" Content="Save export files in subfolder. Uses same name as file." HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-                    <Label Grid.Row="3" Grid.Column="0" x:Name="lblLight" Content="Light:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbxLight" Height="24"  TextWrapping="Wrap" Text="FFFFFF" VerticalAlignment="Top"/>
-                    <Label Grid.Row="3" Grid.Column="3" x:Name="lblLightDesc" Content="Hexadecimal color code or blank for no light." HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <Label Grid.Row="3" Grid.Column="0" x:Name="lblLight" Content="Light:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbxLight" Height="24"  TextWrapping="Wrap" Text="FFFFFF" VerticalAlignment="Center" Margin="0,4,0,4"/>
+                    <Label Grid.Row="3" Grid.Column="3" x:Name="lblLightDesc" Content="Hexadecimal color code or blank for no light." HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 </Grid>
             </ScrollViewer>
         </GroupBox>
