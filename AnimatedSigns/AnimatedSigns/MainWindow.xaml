@@ -34,6 +34,7 @@
                         <RowDefinition MaxHeight="32"/>
                         <RowDefinition MaxHeight="32"/>
                         <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
                     </Grid.RowDefinitions>
 
                     <Rectangle Grid.Column="0" Grid.Row="0"  Fill="#FFE9E9E9" />
@@ -44,9 +45,13 @@
                     <Rectangle Grid.Column="1" Grid.Row="2"  Fill="#FFE9E9E9" />
                     <Rectangle Grid.Column="2" Grid.Row="2"  Fill="#FFE9E9E9" />
 
+                    <Rectangle Grid.Column="0" Grid.Row="4"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="1" Grid.Row="4"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="2" Grid.Row="4"  Fill="#FFE9E9E9" />
+                    
                     <Label Grid.Row="0" Grid.Column="0"  x:Name="lblFPS" Content="FPS:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbxFPS" Height="24" TextWrapping="Wrap" Text="12" VerticalAlignment="Center" Margin="0,4,0,4"/>
-                    <Label Grid.Row="0" Grid.Column="2" x:Name="lblFPSDesc" Content="Framerate of the animation." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label Grid.Row="0" Grid.Column="2" x:Name="lblFPSDesc" Content="Framerate of the animation. Maximum is 60." HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
                     <Label Grid.Row="1" Grid.Column="0" x:Name="lblID" Content="Start ID at 0:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <CheckBox Grid.Row="1" Grid.Column="1" x:Name="chkID" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
@@ -59,6 +64,10 @@
                     <Label Grid.Row="3" Grid.Column="0" x:Name="lblLight" Content="Light:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbxLight" Height="24"  TextWrapping="Wrap" Text="FFFFFF" VerticalAlignment="Center" Margin="0,4,0,4"/>
                     <Label Grid.Row="3" Grid.Column="3" x:Name="lblLightDesc" Content="Hexadecimal color code or blank for no light." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                    <Label Grid.Row="4" Grid.Column="0" x:Name="lblWired" Content="Wired:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <CheckBox Grid.Row="4" Grid.Column="1" x:Name="chkWired" IsChecked="False" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
+                    <Label Grid.Row="4" Grid.Column="2" x:Name="lblWiredDesc" Content="Makes signs wirable. Wired signs can be toggled." HorizontalAlignment="Left" VerticalAlignment="Center"/>
                 </Grid>
             </ScrollViewer>
         </GroupBox>

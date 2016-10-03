@@ -96,6 +96,18 @@ namespace AnimatedSigns
             }
         }
 
+        public bool Wired
+        {
+            get
+            {
+                return chkWired.IsChecked.HasValue && chkWired.IsChecked.Value;
+            }
+            set
+            {
+                chkWired.IsChecked = value;
+            }
+        }
+
         /// <summary>
         /// Event handler that allows users to select a variable amount of image files.
         /// </summary>
@@ -171,7 +183,7 @@ namespace AnimatedSigns
             {
                 animatedFrame.Worker.RunWorkerCompleted += SignWorker_CompletedText;
                 animatedFrame.Worker.ProgressChanged += SignWorker_ProgressChanged;
-                animatedFrame.CreateSigns(FPS, StartIndex, Light);
+                animatedFrame.CreateSigns(FPS, StartIndex, Light, Wired);
             }
             catch (ArgumentException aexc)
             {
@@ -180,6 +192,12 @@ namespace AnimatedSigns
             }
         }
 
+        /// <summary>
+        /// Event handler that creates animated signs for the current files <see cref="Files"/>.
+        /// The results are parsed and turned into files, saved to a given path.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnExport_Click(object sender, RoutedEventArgs e)
         {
             if (!ConfirmGenerating()) return;
@@ -207,7 +225,7 @@ namespace AnimatedSigns
             {
                 animatedFrame.Worker.RunWorkerCompleted += SignWorker_CompletedExports;
                 animatedFrame.Worker.ProgressChanged += SignWorker_ProgressChanged;
-                animatedFrame.CreateSigns(FPS, StartIndex, Light, sfd.FileName);
+                animatedFrame.CreateSigns(FPS, StartIndex, Light, Wired, sfd.FileName);
             }
             catch (ArgumentException aexc)
             {
@@ -273,14 +291,18 @@ namespace AnimatedSigns
             JObject[,] signs = (JObject[,])e.Result;
 
             StringBuilder outp = new StringBuilder("// Each line contains one /spawnitem command for a sign. Signs are named after their [X,Y] position.\n");
+
             for (int i = 0; i < signs.GetLength(1); i++)
             {
                 for (int j = 0; j < signs.GetLength(0); j++)
                 {
-                    if (signs[j, i] == null) continue;
+                    JObject sign = signs[j, i];
+                    if (sign == null) continue;
 
-                    if (((JArray)signs[j, i]["signData"]).Count > 0)
-                        outp.Append("/spawnitem customsign 1 '" + signs[j, i].ToString(Newtonsoft.Json.Formatting.None) + "'\n");
+                    string signName = sign["isWired"] != null && sign["isWired"].Value<bool>() ? "wiredcustomsign" : "customsign";
+
+                    if (((JArray)sign["signData"]).Count > 0)
+                        outp.Append("/spawnitem " + signName + " 1 '" + signs[j, i].ToString(Newtonsoft.Json.Formatting.None) + "'\n");
                 }
             }
 
@@ -336,7 +358,7 @@ namespace AnimatedSigns
                     }
 
                     JObject export = new JObject();
-                    export["name"] = "customsign";
+                    export["name"] = sign["isWired"] != null && sign["isWired"].Value<bool>() ? "wiredcustomsign" : "customsign";
                     export["count"] = 1;
                     export["parameters"] = sign;
 
