@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AnimatedSigns"
         mc:Ignorable="d"
-        Title="Animated Signs" MinHeight="489" Height="489" MinWidth="318" Width="527">
+        Title="Animated Signs" MinHeight="489" Height="489" MinWidth="318" Width="534">
     <Grid>
         <Button x:Name="btnCreate" Content="Create and Copy" Margin="10,0,10,33" VerticalAlignment="Bottom" Click="btnCopy_Click" Height="32"/>
         <Button x:Name="btnExport" Content="Create and Export" Margin="10,0,10,70" VerticalAlignment="Bottom" Click="btnExport_Click" Height="32"/>
@@ -22,7 +22,7 @@
             </Grid>
         </GroupBox>
         <GroupBox x:Name="gbxSettings" Header="Settings" Margin="10,0,10,107" VerticalAlignment="Bottom" Height="189" ScrollViewer.CanContentScroll="True">
-            <ScrollViewer>
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="90" />
