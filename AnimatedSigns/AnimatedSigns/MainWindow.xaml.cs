@@ -309,6 +309,16 @@ namespace AnimatedSigns
             }
 
             string name = target.Name;
+            
+            bool useSub = chkSubFolder.IsChecked.HasValue && chkSubFolder.IsChecked.Value;
+            if (useSub)
+            {
+                DirectoryInfo[] subs = path.GetDirectories().Where(d => d.Name == name).ToArray();
+                if (subs.Length == 0)
+                    path = path.CreateSubdirectory(name);
+                else
+                    path = subs[0];
+            }
 
             for (int i = 0; i < signs.GetLength(0); i++)
             {

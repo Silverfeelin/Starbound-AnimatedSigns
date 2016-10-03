@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text;
+using Silverfeelin.StarboundDrawables;
 
 namespace AnimatedSigns
 {
@@ -156,55 +157,24 @@ namespace AnimatedSigns
             Bitmap firstFrame = Frames[0].Bitmap;
             int spriteWidth = (int)Math.Ceiling((decimal)firstFrame.Width / 32);
             int spriteHeight = (int)Math.Ceiling((decimal)firstFrame.Height / 8);
-
+            
             JObject[,] signs = CreateEmptySigns(spriteWidth, spriteHeight, fps, startIndex, light);
 
             Color[,] templateColors = ColorExt.CreateTemplate();
 
             int frameCount = 0;
-            int maxFrames = Frames.Count * spriteHeight * spriteWidth;
+            int maxFrames = Frames.Count;
+            DrawablesGenerator.PixelLimit = int.MaxValue;
             foreach (Frame f in Frames)
             {
-                Point imagePixel = new Point(0, 0);
+                Worker.ReportProgress(100 * frameCount++ / maxFrames);
+                DrawablesOutput outp = (new DrawablesGenerator(f.Bitmap).Generate());
 
-                // Add a drawable for every signplaceholder needed.
-                for (int frameWidth = 0; frameWidth < spriteWidth; frameWidth++)
+                for (int i = 0; i < outp.Drawables.GetLength(0); i++)
                 {
-                    for (int frameHeight = 0; frameHeight < spriteHeight; frameHeight++)
+                    for (int j = 0; j < outp.Drawables.GetLength(1); j++)
                     {
-                        Worker.ReportProgress(100 * frameCount++ / maxFrames);
-
-                        imagePixel.X = frameWidth * 32;
-                        imagePixel.Y = frameHeight * 8;
-
-                        StringBuilder directives = new StringBuilder("?replace");
-
-                        for (int i = 0; i < 32; i++)
-                        {
-                            for (int j = 0; j < 8; j++)
-                            {
-                                // Pixel falls within template but is outside of the supplied image.
-                                if ((imagePixel.X > f.Bitmap.Width - 1 || imagePixel.Y > f.Bitmap.Height - 1))
-                                {
-                                    imagePixel.Y++;
-                                    continue;
-                                }
-
-                                Color imageColor = f.Bitmap.GetPixel(Convert.ToInt32(imagePixel.X), Convert.ToInt32(imagePixel.Y));
-
-                                Color templateColor = templateColors[i, j];
-
-                                if (imageColor.A > 1)
-                                    directives.AppendFormat(";{0}={1}", templateColor.ToRGBAHexString(), imageColor.ToRGBAHexString());
-
-                                imagePixel.Y++;
-                            }
-
-                            imagePixel.X++;
-                            imagePixel.Y = frameHeight * 8;
-                        }
-
-                        ((JArray)signs[frameWidth, frameHeight]["signData"]).Add(directives.ToString());
+                        ((JArray)signs[i, j]["signData"]).Add(outp.Drawables[i,j].Directives.ToString());
                     }
                 }
             }

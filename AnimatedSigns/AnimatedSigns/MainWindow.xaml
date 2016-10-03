@@ -5,23 +5,62 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AnimatedSigns"
         mc:Ignorable="d"
-        Title="Animated Signs" MinHeight="387" Height="387" MinWidth="314" Width="314">
+        Title="Animated Signs" MinHeight="489" Height="489" MinWidth="318" Width="527">
     <Grid>
-        <Label x:Name="label" Content="Select frames (GIF supported):" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="10,0,0,0"/>
-        <Button x:Name="btnBrowse" Content="Browse..." Margin="180,3,0,0" VerticalAlignment="Top" Click="btnBrowse_Click" HorizontalAlignment="Left" Width="87"/>
-        <TextBox x:Name="tbxFiles" Margin="10,52,10,135" Text="" AcceptsReturn="True" AllowDrop="True" PreviewDragOver="textBox_PreviewDragOver" Drop="textBox_Drop" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
         <Button x:Name="btnCreate" Content="Create and Copy" Margin="10,0,10,33" VerticalAlignment="Bottom" Click="btnCopy_Click" Height="32"/>
         <Button x:Name="btnExport" Content="Create and Export" Margin="10,0,10,70" VerticalAlignment="Bottom" Click="btnExport_Click" Height="32"/>
-        <Label x:Name="lblMissing" Content="Missing or invalid files will be ignored." Margin="10,26,18,0" VerticalAlignment="Top"/>
 
 
         <ProgressBar x:Name="progress" Height="18" Margin="10,0,10,10" VerticalAlignment="Bottom"/>
 
-        <TextBox x:Name="tbxFPS" HorizontalAlignment="Left" Height="24" Margin="47,0,0,106" TextWrapping="Wrap" Text="12" VerticalAlignment="Bottom" Width="53"/>
-        <Label x:Name="lblFPS" Content="FPS:" HorizontalAlignment="Left" Margin="10,0,0,104" VerticalAlignment="Bottom"/>
-        <Label x:Name="lblID" Content="Start ID at 0:" HorizontalAlignment="Left" Margin="100,0,0,104" VerticalAlignment="Bottom"/>
-        <CheckBox x:Name="chkID" Content="" HorizontalAlignment="Left" Margin="173,0,0,109" VerticalAlignment="Bottom"/>
-        <TextBox x:Name="tbxLight" HorizontalAlignment="Left" Height="24" Margin="235,0,-3,106" TextWrapping="Wrap" Text="FFFFFF" VerticalAlignment="Bottom" Width="53"/>
-        <Label x:Name="lblLight" Content="Light:" HorizontalAlignment="Left" Margin="198,0,0,104" VerticalAlignment="Bottom"/>
+        <GroupBox x:Name="gbxInput" Header="Input" Margin="10,0,10,301" ScrollViewer.HorizontalScrollBarVisibility="Auto">
+            <Grid>
+                <Label x:Name="label" Content="Select frames (GIF supported):" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="5,0,0,0"/>
+                <Button x:Name="btnBrowse" Content="Browse..." Margin="174,3,0,0" VerticalAlignment="Top" Click="btnBrowse_Click" HorizontalAlignment="Left" Width="87"/>
+                <Label x:Name="lblMissing" Content="Missing or invalid files will be ignored." Margin="266,0,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>
+                <TextBox x:Name="tbxFiles" Margin="10,28,10,10" Text="" AcceptsReturn="True" AllowDrop="True" PreviewDragOver="textBox_PreviewDragOver" Drop="textBox_Drop" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox x:Name="gbxSettings" Header="Settings" Margin="10,0,10,107" VerticalAlignment="Bottom" Height="189" ScrollViewer.CanContentScroll="True">
+            <ScrollViewer>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90" />
+                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Rectangle Grid.Column="0" Grid.Row="0"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="1" Grid.Row="0"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="2" Grid.Row="0"  Fill="#FFE9E9E9" />
+
+                    <Rectangle Grid.Column="0" Grid.Row="2"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="1" Grid.Row="2"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="2" Grid.Row="2"  Fill="#FFE9E9E9" />
+
+                    <Label Grid.Row="0" Grid.Column="0"  x:Name="lblFPS" Content="FPS:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbxFPS" Height="24" TextWrapping="Wrap" Text="12" VerticalAlignment="Top"/>
+                    <Label Grid.Row="0" Grid.Column="2" x:Name="lblFPSDesc" Content="Framerate of the animation." HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                    <Label Grid.Row="1" Grid.Column="0" x:Name="lblID" Content="Start ID at 0:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <CheckBox Grid.Row="1" Grid.Column="1" x:Name="chkID" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16"/>
+                    <Label Grid.Row="1" Grid.Column="2" x:Name="lblIDDesc" Content="Start item names at 0 or 1 (eg. 'sign [0,0]')." HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                    <Label Grid.Row="2" Grid.Column="0" x:Name="lblSubFolder" Content="Use Subfolder:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <CheckBox Grid.Row="2" Grid.Column="1" x:Name="chkSubFolder" IsChecked="True" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16"/>
+                    <Label Grid.Row="2" Grid.Column="2" x:Name="lblSubFolderDesc" Content="Save export files in subfolder. Uses same name as file." HorizontalAlignment="Left" VerticalAlignment="Top"/>
+
+                    <Label Grid.Row="3" Grid.Column="0" x:Name="lblLight" Content="Light:" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbxLight" Height="24"  TextWrapping="Wrap" Text="FFFFFF" VerticalAlignment="Top"/>
+                    <Label Grid.Row="3" Grid.Column="3" x:Name="lblLightDesc" Content="Hexadecimal color code or blank for no light." HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </Grid>
+            </ScrollViewer>
+        </GroupBox>
     </Grid>
 </Window>

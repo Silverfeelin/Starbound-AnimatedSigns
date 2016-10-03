@@ -41,6 +41,9 @@
     <Reference Include="NumericComparer">
       <HintPath>lib\NumericComparer.dll</HintPath>
     </Reference>
+    <Reference Include="StarboundDrawables">
+      <HintPath>lib\StarboundDrawables.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
