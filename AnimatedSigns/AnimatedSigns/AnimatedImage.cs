@@ -180,10 +180,9 @@ namespace AnimatedSigns
                     for (int j = 0; j < outp.Drawables.GetLength(1); j++)
                     {
                         Drawable d = outp.Drawables[i, j];
-                        if (d != null)
-                            ((JArray)signs[i, j]["signData"]).Add(outp.Drawables[i,j].Directives.ToString());
-                        else
-                            ((JArray)signs[i, j]["signData"]).Add("");
+                        JArray signData = (JArray)signs[i, j]["signData"];
+
+                        signData.Add(d != null ? d.Directives.ToString() : "");
                     }
                 }
             }
