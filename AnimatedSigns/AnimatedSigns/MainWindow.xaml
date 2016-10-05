@@ -4,12 +4,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:AnimatedSigns"
-        mc:Ignorable="d"
-        Title="Animated Signs" MinHeight="489" Height="489" MinWidth="318" Width="534">
+        mc:Ignorable="d" 
+        Title="Animated Signs" MinHeight="489" Height="489" MinWidth="318" Width="568">
     <Grid>
         <Button x:Name="btnCreate" Content="Create and Copy" Margin="10,0,10,33" VerticalAlignment="Bottom" Click="btnCopy_Click" Height="32"/>
         <Button x:Name="btnExport" Content="Create and Export" Margin="10,0,10,70" VerticalAlignment="Bottom" Click="btnExport_Click" Height="32"/>
-
 
         <ProgressBar x:Name="progress" Height="18" Margin="10,0,10,10" VerticalAlignment="Bottom"/>
 
@@ -26,10 +25,28 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="90" />
-                        <ColumnDefinition Width="80"/>
+                        <ColumnDefinition Width="120"/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
+                        <RowDefinition MaxHeight="32"/>
                         <RowDefinition MaxHeight="32"/>
                         <RowDefinition MaxHeight="32"/>
                         <RowDefinition MaxHeight="32"/>
@@ -48,26 +65,112 @@
                     <Rectangle Grid.Column="0" Grid.Row="4"  Fill="#FFE9E9E9" />
                     <Rectangle Grid.Column="1" Grid.Row="4"  Fill="#FFE9E9E9" />
                     <Rectangle Grid.Column="2" Grid.Row="4"  Fill="#FFE9E9E9" />
-                    
+
+                    <Rectangle Grid.Column="0" Grid.Row="6"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="1" Grid.Row="6"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="2" Grid.Row="6"  Fill="#FFE9E9E9" />
+
+                    <Rectangle Grid.Column="0" Grid.Row="8"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="1" Grid.Row="8"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="2" Grid.Row="8"  Fill="#FFE9E9E9" />
+
+                    <Rectangle Grid.Column="0" Grid.Row="10"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="1" Grid.Row="10"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="2" Grid.Row="10"  Fill="#FFE9E9E9" />
+
+                    <Rectangle Grid.Column="0" Grid.Row="12"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="1" Grid.Row="12"  Fill="#FFE9E9E9" />
+                    <Rectangle Grid.Column="2" Grid.Row="12"  Fill="#FFE9E9E9" />
+
+                    <!-- FPS -->
                     <Label Grid.Row="0" Grid.Column="0"  x:Name="lblFPS" Content="FPS:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <TextBox Grid.Row="0" Grid.Column="1" x:Name="tbxFPS" Height="24" TextWrapping="Wrap" Text="12" VerticalAlignment="Center" Margin="0,4,0,4"/>
                     <Label Grid.Row="0" Grid.Column="2" x:Name="lblFPSDesc" Content="Framerate of the animation. Maximum is 60." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    
+                    <!-- Light -->
+                    <Label Grid.Row="1" Grid.Column="0" x:Name="lblLight" Content="Light:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="1" Grid.Column="1" x:Name="tbxLight" Height="24"  TextWrapping="Wrap" Text="FFFFFF" VerticalAlignment="Center" Margin="0,4,0,4"/>
+                    <Label Grid.Row="1" Grid.Column="2" x:Name="lblLightDesc" Content="Hexadecimal color code or blank for no light." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    
+                    <!-- Wired -->
+                    <Label Grid.Row="2" Grid.Column="0" x:Name="lblWired" Content="Wired:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <CheckBox Grid.Row="2" Grid.Column="1" x:Name="chkWired" IsChecked="False" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
+                    <Label Grid.Row="2" Grid.Column="2" x:Name="lblWiredDesc" Content="Makes signs wirable. Wired signs can be toggled." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    
+                    <!-- Short Description -->
+                    <Label Grid.Row="3" Grid.Column="0" x:Name="lblName" Content="Item name:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbxName" Height="24"  TextWrapping="Wrap" Text="Sign" VerticalAlignment="Center" Margin="0,4"/>
+                    <Label Grid.Row="3" Grid.Column="2" x:Name="lblNameDesc" Content="Start of item name. Followed by [X,Y] per sign." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    
+                    <!-- Category -->
+                    <Label Grid.Row="4" Grid.Column="0" x:Name="lblCategory" Content="Category:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="4" Grid.Column="1" x:Name="tbxCategory" Height="24"  TextWrapping="Wrap" Text="decorative" VerticalAlignment="Center" Margin="0,4"/>
+                    <Label Grid.Row="4" Grid.Column="2" x:Name="lblCategoryDesc" Content="Shows below the item name in the tooltip." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    
+                    <!-- Rarity -->
+                    <Label Grid.Row="5" Grid.Column="0" x:Name="lblRarity" Content="Rarity:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="5" Grid.Column="1" x:Name="cbxRarity" Height="24" Text="Sign" VerticalAlignment="Center" Margin="0,4">
+                        <ComboBoxItem IsSelected="True">Common</ComboBoxItem>
+                        <ComboBoxItem>Uncommon</ComboBoxItem>
+                        <ComboBoxItem>Rare</ComboBoxItem>
+                        <ComboBoxItem>Legendary</ComboBoxItem>
+                        <ComboBoxItem>Essential</ComboBoxItem>
+                    </ComboBox>
 
+                    <!-- Transparent Back -->
+                    <Label Grid.Row="6" Grid.Column="0" x:Name="lblTransparentBack" Content="Transparent Back:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <CheckBox Grid.Row="6" Grid.Column="1" x:Name="chkTransparentBack" IsChecked="True" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
+                    <Label Grid.Row="6" Grid.Column="2" x:Name="lblTransparentBackDesc" Content="Makes the sign background invisible on all signs." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+
+                    <!-- Back -->
+                    <Label Grid.Row="7" Grid.Column="0" x:Name="lblBack" Content="Sign Back:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <ComboBox Grid.Row="7" Grid.Column="1" x:Name="cbxBack" Height="24" Text="Sign" VerticalAlignment="Center" Margin="0,4">
+                        <ComboBoxItem IsSelected="True">none</ComboBoxItem>
+                        <ComboBoxItem>blank</ComboBoxItem>
+                        <ComboBoxItem>parchment</ComboBoxItem>
+                        <ComboBoxItem>blackboard</ComboBoxItem>
+                        <ComboBoxItem>glass</ComboBoxItem>
+                        <ComboBoxItem>hazard</ComboBoxItem>
+                    </ComboBox>
+                    <Label Grid.Row="7" Grid.Column="2" x:Name="lblBackDesc" Content="Background of each sign." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <!-- Border Inner -->
+                    
+                    <!-- Border Outer -->
+                    
+                    <!-- Descriptions -->
+                    
+                    <!-- Start Index -->
                     <Label Grid.Row="1" Grid.Column="0" x:Name="lblID" Content="Start ID at 0:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <CheckBox Grid.Row="1" Grid.Column="1" x:Name="chkID" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
                     <Label Grid.Row="1" Grid.Column="2" x:Name="lblIDDesc" Content="Start item names at 0 or 1 (eg. 'sign [0,0]')." HorizontalAlignment="Left" Margin="0,8" Height="26" VerticalAlignment="Center"/>
-
                     <Label Grid.Row="2" Grid.Column="0" x:Name="lblSubFolder" Content="Use Subfolder:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <CheckBox Grid.Row="2" Grid.Column="1" x:Name="chkSubFolder" IsChecked="True" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
                     <Label Grid.Row="2" Grid.Column="2" x:Name="lblSubFolderDesc" Content="Save export files in subfolder. Uses same name as file." HorizontalAlignment="Left" VerticalAlignment="Center"/>
 
-                    <Label Grid.Row="3" Grid.Column="0" x:Name="lblLight" Content="Light:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBox Grid.Row="3" Grid.Column="1" x:Name="tbxLight" Height="24"  TextWrapping="Wrap" Text="FFFFFF" VerticalAlignment="Center" Margin="0,4,0,4"/>
-                    <Label Grid.Row="3" Grid.Column="3" x:Name="lblLightDesc" Content="Hexadecimal color code or blank for no light." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label Grid.Row="5" Grid.Column="0" x:Name="lblDescDefault" Content="Default Desc:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" x:Name="tbxDescDefault" Height="24"  TextWrapping="Wrap" Text="A customized signboard." VerticalAlignment="Center" Margin="0,4,4,4" />
+                    
+                    <Label Grid.Row="6" Grid.Column="0" x:Name="lblDescApex" Content="Apex Desc:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2" x:Name="tbxDescApex" Height="24"  TextWrapping="Wrap" Text="Good public signage is a must for any civilization." VerticalAlignment="Center" Margin="0,4,4,4" />
 
-                    <Label Grid.Row="4" Grid.Column="0" x:Name="lblWired" Content="Wired:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <CheckBox Grid.Row="4" Grid.Column="1" x:Name="chkWired" IsChecked="False" Content="" Margin="0,6,0,5" HorizontalAlignment="Left" Width="16" VerticalAlignment="Center"/>
-                    <Label Grid.Row="4" Grid.Column="2" x:Name="lblWiredDesc" Content="Makes signs wirable. Wired signs can be toggled." HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <Label Grid.Row="7" Grid.Column="0" x:Name="lblDescAvian" Content="Avian Desc:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="7" Grid.Column="1" Grid.ColumnSpan="2" x:Name="tbxDescAvian" Height="24"  TextWrapping="Wrap" Text="Good public signage is a must for any civilization." VerticalAlignment="Center" Margin="0,4,4,4" />
+
+                    <Label Grid.Row="8" Grid.Column="0" x:Name="lblDescFloran" Content="Floran Desc:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="8" Grid.Column="1" Grid.ColumnSpan="2" x:Name="tbxDescFloran" Height="24"  TextWrapping="Wrap" Text="Good public signage is a must for any civilization." VerticalAlignment="Center" Margin="0,4,4,4" />
+
+                    <Label Grid.Row="9" Grid.Column="0" x:Name="lblDescGlitch" Content="Glitch Desc:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="9" Grid.Column="1" Grid.ColumnSpan="2" x:Name="tbxDescGlitch" Height="24"  TextWrapping="Wrap" Text="Good public signage is a must for any civilization." VerticalAlignment="Center" Margin="0,4,4,4" />
+
+                    <Label Grid.Row="10" Grid.Column="0" x:Name="lblDescHuman" Content="Human Desc:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="10" Grid.Column="1" Grid.ColumnSpan="2" x:Name="tbxDescHuman" Height="24"  TextWrapping="Wrap" Text="Good public signage is a must for any civilization." VerticalAlignment="Center" Margin="0,4,4,4" />
+
+                    <Label Grid.Row="11" Grid.Column="0" x:Name="lblDescHylotl" Content="Hylotl Desc:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="11" Grid.Column="1" Grid.ColumnSpan="2" x:Name="tbxDescHylotl" Height="24"  TextWrapping="Wrap" Text="Good public signage is a must for any civilization." VerticalAlignment="Center" Margin="0,4,4,4" />
+
+                    <Label Grid.Row="12" Grid.Column="0" x:Name="lblDescNovakid" Content="Novakid Desc:" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    <TextBox Grid.Row="12" Grid.Column="1" Grid.ColumnSpan="2" x:Name="tbxDescNovakid" Height="24"  TextWrapping="Wrap" Text="Good public signage is a must for any civilization." VerticalAlignment="Center" Margin="0,4,4,4" />
+
                 </Grid>
             </ScrollViewer>
         </GroupBox>

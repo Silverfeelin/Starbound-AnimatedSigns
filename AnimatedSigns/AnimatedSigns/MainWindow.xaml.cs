@@ -183,7 +183,7 @@ namespace AnimatedSigns
             {
                 animatedFrame.Worker.RunWorkerCompleted += SignWorker_CompletedText;
                 animatedFrame.Worker.ProgressChanged += SignWorker_ProgressChanged;
-                animatedFrame.CreateSigns(FPS, StartIndex, Light, Wired);
+                animatedFrame.CreateSigns(GetTemplate());
             }
             catch (ArgumentException aexc)
             {
@@ -225,7 +225,7 @@ namespace AnimatedSigns
             {
                 animatedFrame.Worker.RunWorkerCompleted += SignWorker_CompletedExports;
                 animatedFrame.Worker.ProgressChanged += SignWorker_ProgressChanged;
-                animatedFrame.CreateSigns(FPS, StartIndex, Light, Wired, sfd.FileName);
+                animatedFrame.CreateSigns(GetTemplate(), sfd.FileName);
             }
             catch (ArgumentException aexc)
             {
@@ -234,6 +234,31 @@ namespace AnimatedSigns
             }
         }
 
+        private SignTemplate GetTemplate()
+        {
+            return new SignTemplate()
+            {
+                FPS = FPS,
+                Light = Light,
+                Wired = Wired,
+                StartIndex = StartIndex,
+                Category = "TODO",
+                ShortDescription = "TODO",
+                Rarity = "TODO",
+                DefaultDescription = tbxDescDefault.Text,
+                ApexDescription = tbxDescApex.Text,
+                AvianDescripion = tbxDescAvian.Text,
+                FloranDescription = tbxDescFloran.Text,
+                GlitchDescription = tbxDescGlitch.Text,
+                HumanDescription = tbxDescHuman.Text,
+                HylotlDescription = tbxDescHylotl.Text,
+                NovakidDescription = tbxDescNovakid.Text,
+                TransparentBack = true,
+                Back = "TODO",
+                BorderInner = "TODO",
+                BorderOuter = "TODO"
+            };
+        }
         /// <summary>
         /// Prompts the user to confirm if they want to generate the signs.
         /// </summary>
