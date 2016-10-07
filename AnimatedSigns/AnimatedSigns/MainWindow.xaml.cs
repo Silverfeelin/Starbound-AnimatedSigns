@@ -225,7 +225,9 @@ namespace AnimatedSigns
             {
                 animatedFrame.Worker.RunWorkerCompleted += SignWorker_CompletedExports;
                 animatedFrame.Worker.ProgressChanged += SignWorker_ProgressChanged;
-                animatedFrame.CreateSigns(GetTemplate(), sfd.FileName);
+                SignTemplate template = GetTemplate();
+                template.ExportPath = sfd.FileName;
+                animatedFrame.CreateSigns(template);
             }
             catch (ArgumentException aexc)
             {
@@ -242,9 +244,9 @@ namespace AnimatedSigns
                 Light = Light,
                 Wired = Wired,
                 StartIndex = StartIndex,
-                Category = "TODO",
-                ShortDescription = "TODO",
-                Rarity = "TODO",
+                Category = tbxCategory.Text,
+                ShortDescription = tbxName.Text,
+                Rarity = cbxRarity.SelectedValue.ToString(),
                 DefaultDescription = tbxDescDefault.Text,
                 ApexDescription = tbxDescApex.Text,
                 AvianDescripion = tbxDescAvian.Text,
@@ -253,10 +255,12 @@ namespace AnimatedSigns
                 HumanDescription = tbxDescHuman.Text,
                 HylotlDescription = tbxDescHylotl.Text,
                 NovakidDescription = tbxDescNovakid.Text,
-                TransparentBack = true,
-                Back = "TODO",
-                BorderInner = "TODO",
-                BorderOuter = "TODO"
+                TransparentBack = chkTransparentBack.IsChecked.HasValue && chkTransparentBack.IsChecked.Value,
+                Back = cbxBack.SelectedValue.ToString(),
+                BorderInner = tbxBorderInner.Text,
+                BorderOuter = tbxBorderOuter.Text,
+
+                UseSubfolder = chkSubFolder.IsChecked.HasValue && chkSubFolder.IsChecked.Value
             };
         }
         /// <summary>
@@ -313,7 +317,9 @@ namespace AnimatedSigns
         /// <param name="e">Event args, contains signs as (JObject[,])e.Result.</param>
         private void SignWorker_CompletedText(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            JObject[,] signs = (JObject[,])e.Result;
+            Tuple<SignTemplate, JObject[,]> result = (Tuple<SignTemplate, JObject[,]>)e.Result;
+            SignTemplate template = result.Item1;
+            JObject[,] signs = result.Item2;
 
             StringBuilder outp = new StringBuilder("// Each line contains one /spawnitem command for a sign. Signs are named after their [X,Y] position.\n");
 
@@ -324,7 +330,7 @@ namespace AnimatedSigns
                     JObject sign = signs[j, i];
                     if (sign == null) continue;
 
-                    string signName = sign["isWired"] != null && sign["isWired"].Value<bool>() ? "wiredcustomsign" : "customsign";
+                    string signName = template.Wired ? "wiredcustomsign" : "customsign";
 
                     if (((JArray)sign["signData"]).Count > 0)
                         outp.Append("/spawnitem " + signName + " 1 '" + signs[j, i].ToString(Newtonsoft.Json.Formatting.None) + "'\n");
@@ -343,11 +349,12 @@ namespace AnimatedSigns
         /// <param name="e">Event args, contains signs as (JObject[,])e.Result.</param>
         private void SignWorker_CompletedExports(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
         {
-            Tuple<string, JObject[,]> result = (Tuple<string,JObject[,]>)e.Result;
+            Tuple<SignTemplate, JObject[,]> result = (Tuple<SignTemplate, JObject[,]>)e.Result;
 
+            SignTemplate template = result.Item1;
             JObject[,] signs = result.Item2;
 
-            FileInfo target = new FileInfo(result.Item1);
+            FileInfo target = new FileInfo(template.ExportPath);
             DirectoryInfo path = target.Directory;
             if (!path.Exists)
             {
@@ -357,8 +364,7 @@ namespace AnimatedSigns
 
             string name = target.Name;
             
-            bool useSub = chkSubFolder.IsChecked.HasValue && chkSubFolder.IsChecked.Value;
-            if (useSub)
+            if (template.UseSubfolder)
             {
                 DirectoryInfo[] subs = path.GetDirectories().Where(d => d.Name == name).ToArray();
                 if (subs.Length == 0)
@@ -372,7 +378,9 @@ namespace AnimatedSigns
                 for (int j = 0; j < signs.GetLength(1); j++)
                 {
                     JObject sign = signs[i, j];
-                    string signPath = path.FullName + "\\" + name + sign["shortdescription"].Value<string>() + ".json";
+                    if (sign == null) continue;
+                    
+                    string signPath = string.Format("{0}\\{1} [{2},{3}].json", path.FullName, name, i, j);
                     if (File.Exists(signPath))
                     {
                         MessageBoxResult mbr = MessageBox.Show("File '" + signPath + "' already exists. Do you want to overwrite it?", "Warning", MessageBoxButton.YesNoCancel);
@@ -383,7 +391,7 @@ namespace AnimatedSigns
                     }
 
                     JObject export = new JObject();
-                    export["name"] = sign["isWired"] != null && sign["isWired"].Value<bool>() ? "wiredcustomsign" : "customsign";
+                    export["name"] = template.Wired ? "wiredcustomsign" : "customsign";
                     export["count"] = 1;
                     export["parameters"] = sign;
 

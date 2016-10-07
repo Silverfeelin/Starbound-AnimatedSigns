@@ -9,7 +9,21 @@ namespace AnimatedSigns
     public class SignTemplate
     {
         public int FPS { get; set; } = 4;
-        public string Light { get; set; } = string.Empty;
+        private string _light = string.Empty;
+        public string Light
+        {
+            get
+            {
+                return _light;
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    _light = null;
+                else
+                    _light = value.Replace("#", "");
+            }
+        }
         public bool Wired { get; set; } = false;
         public int StartIndex { get; set; } = 1;
         public string Category { get; set; } = "decorative";
@@ -25,8 +39,38 @@ namespace AnimatedSigns
         public string NovakidDescription { get; set; } = string.Empty;
         public bool TransparentBack { get; set; } = true;
         public string Back { get; set; } = "blank";
-        public string BorderInner { get; set; } = "00000000";
-        public string BorderOuter { get; set; } = "00000000";
+        private string _borderInner = "00000000";
+        public string BorderInner
+        {
+            get
+            {
+                return _borderInner;
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    _borderInner = "00000000";
+                else
+                    _borderInner = value.Replace("#", "");
+            }
+        }
+        private string _borderOuter = "00000000";
+        public string BorderOuter
+        {
+            get
+            {
+                return _borderOuter;
+            }
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    _borderOuter = "00000000";
+                else
+                    _borderOuter = value.Replace("#", "");
+            }
+        }
+        public bool UseSubfolder { get; set; } = false;
+        public string ExportPath { get; set; } = null;
 
         public SignTemplate() { }
     }
