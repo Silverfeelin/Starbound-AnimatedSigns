@@ -21,10 +21,7 @@ namespace AnimatedSigns
 
         public string ExportPath { get; set; } = null;
 
-        private int fps;
-        private int startIndex;
-        private string light;
-        private bool wired;
+        private SignTemplate signTemplate;
 
         /// <summary>
         /// Initialized a new empty AnimatedImage.
@@ -105,25 +102,52 @@ namespace AnimatedSigns
         /// <param name="fps">Animation 'framerate'. Interval between each frame is (1/fps).</param>
         /// <param name="startIndex">Start index used for naming items. "Sign [x,y]"</param>
         /// <returns>Two dimensional array of instantiated customsign objects, without any signData entries.</returns>
-        private JObject[,] CreateEmptySigns(int width, int height, int fps = 12, int startIndex = 0, string light = null, bool wired = false)
+        private JObject[,] CreateEmptySigns(int width, int height, SignTemplate template)
         {
             JObject[,] signs = new JObject[width, height];
-            double cooldown = 1d / fps;
+            double cooldown = 1d / template.FPS;
 
             JObject sign = JObject.Parse("{   \"animationParts\": {     \"background\": \"none?multiply=00000000\"   },   \"scriptStorage\": {},   \"signBacking\": \"none\",   \"signData\": [], \"scriptDelta\": 1,  \"shortdescription\": \"Animated Sign\" }");
-            sign["drawCooldown"] = cooldown;
-            if (light != null)
-                sign["signLight"] = light;
 
-            if (wired)
-                sign["isWired"] = true;
+            sign["drawCooldown"] = cooldown;
+
+            if (template.Light != null)
+                sign["signLight"] = template.Light;
+            
+            sign["isWired"] = template.Wired;
+            sign["category"] = template.Category;
+            sign["rarity"] = template.Rarity;
+
+            sign["description"] = template.DefaultDescription;
+            sign["apexDescription"] = template.ApexDescription;
+            sign["avianDescription"] = template.AvianDescripion;
+            sign["floranDescription"] = template.FloranDescription;
+            sign["glitchDescription"] = template.GlitchDescription;
+            sign["humanDescription"] = template.HumanDescription;
+            sign["hylotlDescription"] = template.HylotlDescription;
+            sign["novakidDescription"] = template.NovakidDescription;
+
+            if (template.TransparentBack)
+            {
+                sign["animationParts"]["background"] = "none?multiply=00000000";
+            }
+            else
+            {
+                sign["animationParts"]["background"] = template.Back;
+                sign["signBacking"] = template.Back;
+            }
+
+            JArray frameColors = new JArray();
+            frameColors.Add(template.BorderInner);
+            frameColors.Add(template.BorderOuter);
+            sign["frameColors"] = frameColors;
 
             for (int x = 0; x < width; x++) // Every image in the width (32px)
             {
                 for (int y = 0; y < height; y++) // Every image in the height (8px)
                 {
                     signs[x, y] = (JObject)sign.DeepClone();
-                    signs[x, y]["shortdescription"] = string.Format("[{0},{1}]", (x + startIndex), (y + startIndex));
+                    signs[x, y]["shortdescription"] = string.Format("{0} [{1},{2}]", template.ShortDescription, (x + template.StartIndex), (y + template.StartIndex));
                 }
             }
 
@@ -134,20 +158,14 @@ namespace AnimatedSigns
         /// Starts creating sign objects containing the parameters for customsigns in a two dimensional array.
         /// The result will be sent to subscribers to the RunWorkerCompleted event of <see cref="Worker"/>.
         /// </summary>
-        /// <param name="fps">Animation 'framerate'. Interval between each frame is (1/fps).</param>
-        /// <param name="startIndex">Start index used for naming items. "Sign [x,y]"</param>
-        public void CreateSigns(int fps, int startIndex = 0, string light = null, bool wired = false, string exportPath = null)
+        public void CreateSigns(SignTemplate template)
         {
             if (Frames.Count == 0)
                 throw new ArgumentException("No frames could be found. Did you select valid files?");
 
-            this.fps = fps;
-            this.startIndex = startIndex;
-            this.light = light;
-            this.ExportPath = exportPath;
-            this.wired = wired;
+            this.signTemplate = template;
 
-            Worker.RunWorkerAsync(exportPath);
+            Worker.RunWorkerAsync();
         }
 
         /// <summary>
@@ -163,7 +181,7 @@ namespace AnimatedSigns
             int spriteWidth = (int)Math.Ceiling((decimal)firstFrame.Width / 32);
             int spriteHeight = (int)Math.Ceiling((decimal)firstFrame.Height / 8);
             
-            JObject[,] signs = CreateEmptySigns(spriteWidth, spriteHeight, fps, startIndex, light, wired);
+            JObject[,] signs = CreateEmptySigns(spriteWidth, spriteHeight, signTemplate);
 
             Color[,] templateColors = ColorExt.CreateTemplate();
 
@@ -188,11 +206,8 @@ namespace AnimatedSigns
             }
 
             Worker.ReportProgress(100);
-            if (e.Argument is string)
-                e.Result = new Tuple<string, JObject[,]>(e.Argument as string, signs);
-            else
-                e.Result = signs;
 
+            e.Result = new Tuple<SignTemplate, JObject[,]>(signTemplate, signs);
         }
     }
 }
