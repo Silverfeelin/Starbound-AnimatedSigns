@@ -380,7 +380,7 @@ namespace AnimatedSigns
                     JObject sign = signs[i, j];
                     if (sign == null) continue;
                     
-                    string signPath = string.Format("{0}\\{1} [{2},{3}].json", path.FullName, name, i, j);
+                    string signPath = string.Format("{0}\\{1} [{2},{3}].json", path.FullName, name, i + template.StartIndex, j + template.StartIndex);
                     if (File.Exists(signPath))
                     {
                         MessageBoxResult mbr = MessageBox.Show("File '" + signPath + "' already exists. Do you want to overwrite it?", "Warning", MessageBoxButton.YesNoCancel);
